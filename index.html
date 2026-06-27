@@ -330,28 +330,14 @@
     }
 
     .inside-card {
-      background: var(--white);
+      background: rgba(12,10,8,0.75);
       padding: 2.5rem 2rem;
       transition: background 0.2s, box-shadow 0.3s;
       position: relative;
       overflow: hidden;
     }
 
-    /* B — Teal shimmer border on hover */
-    .inside-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--teal), transparent);
-      transform: translateX(-100%);
-      transition: transform 0.5s ease;
-    }
-
-    .inside-card:hover::after { transform: translateX(100%); }
-    .inside-card:hover { background: var(--card); }
+    .inside-card:hover { background: rgba(20,16,12,0.88); }
 
     .inside-card-title {
       font-family: 'Bebas Neue', sans-serif;
@@ -363,7 +349,7 @@
 
     .inside-card-desc {
       font-size: 0.93rem;
-      color: var(--muted);
+      color: #A09070;
       line-height: 1.75;
       margin-bottom: 1.5rem;
     }
@@ -377,8 +363,8 @@
     .channel {
       font-size: 0.75rem;
       font-weight: 500;
-      color: var(--tag-txt);
-      background: var(--tag-bg);
+      color: #A09070;
+      background: rgba(255,255,255,0.08);
       padding: 0.3rem 0.65rem;
       border-radius: 2px;
     }
@@ -542,7 +528,7 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: 0.85rem;
       letter-spacing: 0.15em;
-      color: var(--rule);
+      color: #5A4A2A;
       margin-bottom: 1rem;
       display: block;
     }
@@ -641,11 +627,6 @@
   </div>
   </div>
 
-  <!-- BANNER IMAGE -->
-  <div style="width:100%;overflow:hidden;max-height:340px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);">
-    <img src="banner-cathedral.png" alt="" style="width:100%;object-fit:cover;display:block;opacity:0.9;">
-  </div>
-
   <!-- STAT STRIP -->
   <div class="section-rule-slow"></div>
   <div class="stat-strip">
@@ -665,7 +646,7 @@
 
   <!-- INSIDE -->
   <div class="section-rule-double"></div>
-  <div class="offset-block-dark">
+  <div class="offset-block-dark" style="background: linear-gradient(rgba(10,8,6,0.82), rgba(10,8,6,0.82)), url('banner-cathedral.png') center/cover no-repeat;">
   <div class="section" style="padding-top:3rem;padding-bottom:3rem;">
     <span class="label">What's Inside</span>
     <div class="inside-grid">
