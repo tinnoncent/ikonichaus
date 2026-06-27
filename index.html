@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IKONIC ◈ HAUS</title>
+  <meta name="description" content="A Discord community for serious AI artists and filmmakers. Prompt craft, animation pipelines, sref libraries, and the aesthetic thinking behind all of it." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white:   #FFFFFF;
+      --bg:      #F7F7F5;
+      --card:    #EFEFED;
+      --black:   #0C0C0C;
+      --dark:    #1A1A1A;
+      --muted:   #555555;
+      --rule:    #DDDDD8;
+      --tag-bg:  #E4E4E0;
+      --tag-txt: #444444;
+      --teal:    #00A896;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--black);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 4vw;
+      background: rgba(247,247,245,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-mark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .nav-cta {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--teal);
+      padding: 0.6rem 1.5rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: #008a7a; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 4vw 0;
+      padding-top: 80px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .hero-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 3rem;
+    }
+
+    .hero-logo {
+      width: clamp(70px, 10vw, 130px);
+      margin-bottom: 2.5rem;
+      display: block;
+      animation: slow-rotate 70s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes slow-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 11vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+      color: var(--black);
+      max-width: 1000px;
+      margin-bottom: 0;
+    }
+
+    .hero-headline .dim { color: #BBBBBB; }
+
+    .hero-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--rule);
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.8;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--black);
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      white-space: nowrap;
+      border: 2px solid var(--black);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .cta-btn:hover {
+      background: transparent;
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 4vw;
+    }
+
+    .section-rule { width: 100%; height: 1px; background: var(--rule); }
+
+    .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 2.5rem;
+      display: block;
+    }
+
+    /* ── WHO ── */
+    .who-head {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 4.5rem);
+      line-height: 1;
+      color: var(--black);
+      max-width: 700px;
+      margin-bottom: 1.25rem;
+    }
+
+    .who-body {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.8;
+      margin-bottom: 4rem;
+    }
+
+    .who-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+
+    .who-card {
+      background: var(--white);
+      padding: 2rem 1.75rem;
+      transition: background 0.2s;
+    }
+
+    .who-card:hover { background: var(--card); }
+
+    .who-card-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 0.75rem;
+    }
+
+    .who-card-desc {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ── INSIDE ── */
+    .inside-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+
+    .inside-card {
+      background: var(--white);
+      padding: 2.5rem 2rem;
+      transition: background 0.2s;
+    }
+
+    .inside-card:hover { background: var(--card); }
+
+    .inside-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.04em;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+    }
+
+    .inside-card-desc {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .channels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .channel {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--tag-txt);
+      background: var(--tag-bg);
+      padding: 0.3rem 0.65rem;
+      border-radius: 2px;
+    }
+
+    /* ── MANIFESTO ── */
+    .manifesto-section {
+      padding: 8rem 4vw;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .manifesto-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      line-height: 1;
+      color: var(--black);
+      max-width: 900px;
+    }
+
+    .manifesto-text .dim { color: var(--teal); }
+
+    /* ── CTA BOTTOM ── */
+    .cta-section {
+      padding: 7rem 4vw;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-head {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5.5vw, 5rem);
+      line-height: 1;
+      color: var(--black);
+    }
+
+    .cta-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.75rem;
+    }
+
+    .cta-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2rem 4vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-mark {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-sub {
+      font-size: 0.78rem;
+      color: #AAAAAA;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      background: var(--black);
+      padding: 0.85rem 0;
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+    }
+
+    .marquee-track span {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      padding: 0 2.5rem;
+      white-space: nowrap;
+    }
+
+    .marquee-track span.sep {
+      color: #333;
+      padding: 0;
+      letter-spacing: 0;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── STAT STRIP ── */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .stat-item {
+      background: var(--bg);
+      padding: 3rem 4vw;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      line-height: 1;
+      color: var(--black);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── NUMBERED CARDS ── */
+    .card-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: var(--rule);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .who-grid   { grid-template-columns: repeat(2, 1fr); }
+      .inside-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 560px) {
+      .who-grid   { grid-template-columns: 1fr; }
+      .inside-grid { grid-template-columns: 1fr; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; }
+      .cta-section { flex-direction: column; align-items: flex-start; }
+      .cta-right   { align-items: flex-start; }
+      footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-mark" href="#">IKONIC ◈ HAUS</a>
+    <a class="nav-cta" href="https://discord.gg/qZ5HTuCEAV" target="_blank">Join Discord</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-inner">
+      <img class="hero-logo" src="logo.png" alt="Ikonic Haus" />
+      <h1 class="hero-headline">AI Craft.<br/><span class="dim">No Shortcuts.</span></h1>
+    </div>
+    <div class="hero-bottom">
+      <p class="hero-sub">
+        A Discord community for AI artists and filmmakers who take the work seriously. Prompts, pipelines, sref libraries, and the aesthetic thinking behind all of it.
+      </p>
+      <a class="cta-btn" href="https://discord.gg/qZ5HTuCEAV" target="_blank">Join the Community</a>
+    </div>
+  </header>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>AI Craft</span><span class="sep">·</span>
+      <span>No Shortcuts</span><span class="sep">·</span>
+      <span>Serious Output</span><span class="sep">·</span>
+      <span>Prompt Craft</span><span class="sep">·</span>
+      <span>Animation Pipelines</span><span class="sep">·</span>
+      <span>SREF Library</span><span class="sep">·</span>
+      <span>Join the Community</span><span class="sep">·</span>
+      <span>The Tools Are Not the Work</span><span class="sep">·</span>
+      <span>AI Craft</span><span class="sep">·</span>
+      <span>No Shortcuts</span><span class="sep">·</span>
+      <span>Serious Output</span><span class="sep">·</span>
+      <span>Prompt Craft</span><span class="sep">·</span>
+      <span>Animation Pipelines</span><span class="sep">·</span>
+      <span>SREF Library</span><span class="sep">·</span>
+      <span>Join the Community</span><span class="sep">·</span>
+      <span>The Tools Are Not the Work</span><span class="sep">·</span>
+    </div>
+  </div>
+
+  <!-- WHO -->
+  <div class="section-rule"></div>
+  <div class="section">
+    <span class="label">Who This Is For</span>
+    <h2 class="who-head">Past the basics.<br/>Serious about output.</h2>
+    <p class="who-body">
+      If you're already making things with AI tools and want to go further — better images, tighter pipelines, stronger aesthetics — this community was built for you.
+    </p>
+    <div class="who-grid">
+      <div class="who-card">
+        <p class="who-card-title">Image Artists</p>
+        <p class="who-card-desc">Prompt engineers and visual artists pushing Midjourney, Flux, Grok Imagine, and Ideogram past their defaults.</p>
+      </div>
+      <div class="who-card">
+        <p class="who-card-title">AI Filmmakers</p>
+        <p class="who-card-desc">Directors building cinematic work with Grok Imagine, Seedance 2.0, Kling, Runway, and Veo. Pipeline thinkers, not clip posters.</p>
+      </div>
+      <div class="who-card">
+        <p class="who-card-title">Sound Designers</p>
+        <p class="who-card-desc">Voice cloners, composers, and sound designers using Fish Audio, Suno, Udio, and ElevenLabs to make the work land.</p>
+      </div>
+      <div class="who-card">
+        <p class="who-card-title">Brand Builders</p>
+        <p class="who-card-desc">Creators using AI with intention — building something with a real identity, not just churning content.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-item">
+      <span class="stat-number">6</span>
+      <span class="stat-label">Tool Categories</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">20+</span>
+      <span class="stat-label">Dedicated Channels</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">0</span>
+      <span class="stat-label">Shortcuts Taken</span>
+    </div>
+  </div>
+
+  <!-- INSIDE -->
+  <div class="section-rule"></div>
+  <div class="section">
+    <span class="label">What's Inside</span>
+    <div class="inside-grid">
+
+      <div class="inside-card">
+        <span class="card-number">01</span>
+        <p class="inside-card-title">Images</p>
+        <p class="inside-card-desc">Dedicated rooms for every major generator. Share work, dissect prompts, study what's actually producing results.</p>
+        <div class="channels">
+          <span class="channel">#midjourney</span>
+          <span class="channel">#grok-imagine</span>
+          <span class="channel">#flux</span>
+          <span class="channel">#ideogram</span>
+          <span class="channel">#stable-diffusion</span>
+        </div>
+      </div>
+
+      <div class="inside-card">
+        <span class="card-number">02</span>
+        <p class="inside-card-title">SREF Library</p>
+        <p class="inside-card-desc">A tagged, community-curated Midjourney style reference library. Codes with previews, mood tags, and era labels. Built to actually be useful.</p>
+        <div class="channels">
+          <span class="channel">#sref-library</span>
+          <span class="channel">#prompt-clinic</span>
+        </div>
+      </div>
+
+      <div class="inside-card">
+        <span class="card-number">03</span>
+        <p class="inside-card-title">Animation</p>
+        <p class="inside-card-desc">The serious AI video stack. Pipeline breakdowns, tool comparisons, and real workflow sharing.</p>
+        <div class="channels">
+          <span class="channel">#grok-imagine</span>
+          <span class="channel">#seedance</span>
+          <span class="channel">#kling</span>
+          <span class="channel">#runway</span>
+          <span class="channel">#veo</span>
+          <span class="channel">#luma</span>
+          <span class="channel">#workflow-breakdown</span>
+        </div>
+      </div>
+
+      <div class="inside-card">
+        <span class="card-number">04</span>
+        <p class="inside-card-title">Voice & Music</p>
+        <p class="inside-card-desc">Voice cloning, AI scoring, sound design. Everything that makes a piece of AI content actually feel like something.</p>
+        <div class="channels">
+          <span class="channel">#fish-audio</span>
+          <span class="channel">#elevenlabs</span>
+          <span class="channel">#suno</span>
+          <span class="channel">#udio</span>
+        </div>
+      </div>
+
+      <div class="inside-card">
+        <span class="card-number">05</span>
+        <p class="inside-card-title">Craft</p>
+        <p class="inside-card-desc">Aesthetics, critique, collaboration. The thinking that separates intentional work from generated content.</p>
+        <div class="channels">
+          <span class="channel">#aesthetics-theory</span>
+          <span class="channel">#critique-circle</span>
+          <span class="channel">#collab-board</span>
+          <span class="channel">#show-your-work</span>
+        </div>
+      </div>
+
+      <div class="inside-card">
+        <span class="card-number">06</span>
+        <p class="inside-card-title">The Vault</p>
+        <p class="inside-card-desc">Curated sref collections, production frameworks, and member-only resources. Deeper access for serious members.</p>
+        <div class="channels">
+          <span class="channel">#sref-vault</span>
+          <span class="channel">#production-bibles</span>
+          <span class="channel">#monthly-drops</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <div class="section-rule"></div>
+  <div class="manifesto-section">
+    <p class="manifesto-text">
+      The tools<br/>
+      are not<br/>
+      <span class="dim">the work.</span>
+    </p>
+  </div>
+
+  <!-- CTA -->
+  <div class="section-rule"></div>
+  <div class="cta-section">
+    <h2 class="cta-head">Ready to<br/>go deeper?</h2>
+    <div class="cta-right">
+      <a class="cta-btn" href="https://discord.gg/qZ5HTuCEAV" target="_blank">Join the Community</a>
+      <span class="cta-note">Free to join &nbsp;·&nbsp; Vault access available</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="section-rule"></div>
+  <footer>
+    <span class="footer-mark">Ikonic ◈ Haus &nbsp;·&nbsp; 2026</span>
+    <span class="footer-sub">A community for serious AI creators</span>
+  </footer>
+
+</body>
+</html>
