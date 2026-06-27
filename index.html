@@ -191,15 +191,21 @@
 
     /* ── OFFSET BLOCKS ── */
     .offset-block {
-      background: #D4C090;
       border: 1px solid var(--rule);
       padding: 3rem 4vw;
     }
 
+    .offset-block:not([style*="background"]) {
+      background: #D4C090;
+    }
+
     .offset-block-dark {
-      background: #C8B080;
       border: 1px solid #B8A070;
       padding: 3rem 4vw;
+    }
+
+    .offset-block-dark:not([style*="background"]) {
+      background: #C8B080;
     }
 
     /* ── ANIMATED RULES — multiple speeds/directions ── */
