@@ -206,10 +206,18 @@
     .who-section-bg {
       border: 1px solid var(--rule);
       padding: 3rem 4vw;
-      background:
-        linear-gradient(rgba(212,192,144,0.55), rgba(212,192,144,0.55)),
-        url('who-bg.jpg') center/cover no-repeat;
+      background-image: linear-gradient(rgba(10,8,6,0.78), rgba(10,8,6,0.78)), url('who-bg.jpg');
+      background-size: cover;
+      background-position: center;
     }
+
+    .who-section-bg .who-head { color: var(--white); }
+    .who-section-bg .who-body { color: #A09070; }
+    .who-section-bg .label { color: var(--teal); }
+    .who-section-bg .who-card { background: rgba(12,10,8,0.75); }
+    .who-section-bg .who-card:hover { background: rgba(20,16,12,0.88); }
+    .who-section-bg .who-card-title { color: var(--white); }
+    .who-section-bg .who-card-desc { color: #A09070; }
 
     /* ── ANIMATED RULES — multiple speeds/directions ── */
     .section-rule {
