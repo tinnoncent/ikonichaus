@@ -191,21 +191,25 @@
 
     /* ── OFFSET BLOCKS ── */
     .offset-block {
+      background: #D4C090;
       border: 1px solid var(--rule);
       padding: 3rem 4vw;
     }
 
-    .offset-block:not([style*="background"]) {
-      background: #D4C090;
-    }
-
     .offset-block-dark {
+      background: #C8B080;
       border: 1px solid #B8A070;
       padding: 3rem 4vw;
     }
 
-    .offset-block-dark:not([style*="background"]) {
-      background: #C8B080;
+    /* WHO background image section */
+    .who-section-bg {
+      border: 1px solid var(--rule);
+      padding: 3rem 4vw;
+      background:
+        linear-gradient(rgba(212,192,144,0.85), rgba(212,192,144,0.85)),
+        url('who-bg.jpg') center/cover no-repeat;
+      background-blend-mode: normal;
     }
 
     /* ── ANIMATED RULES — multiple speeds/directions ── */
@@ -433,7 +437,8 @@
 
     /* ── FOOTER ── */
     footer {
-      border-top: 1px solid var(--rule);
+      background: #0C0C0C;
+      border-top: 1px solid #CC2200;
       padding: 2rem 4vw;
       display: flex;
       align-items: center;
@@ -447,12 +452,12 @@
       font-weight: 500;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--teal);
+      color: #CC2200;
     }
 
     .footer-sub {
       font-size: 0.78rem;
-      color: #AAAAAA;
+      color: #555555;
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
@@ -605,7 +610,7 @@
 
   <!-- WHO -->
   <div class="section-rule-rev"></div>
-  <div class="offset-block" style="background: linear-gradient(rgba(212,192,144,0.88), rgba(212,192,144,0.88)), url('who-bg.jpg') center/cover no-repeat;">
+  <div class="who-section-bg">
   <div class="section" style="padding-top:3rem;padding-bottom:3rem;">
     <span class="label">Who This Is For</span>
     <h2 class="who-head">Past the basics.<br/>Serious about output.</h2>
