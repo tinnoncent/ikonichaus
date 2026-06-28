@@ -433,9 +433,15 @@
       <button class="seed-mode-btn" data-smode="text-to-video" onclick="setSeedanceMode(this,'text-to-video')">TEXT → VIDEO</button>
       <button class="seed-mode-btn" data-smode="reference-to-video" onclick="setSeedanceMode(this,'reference-to-video')">REFERENCE</button>
     </div>
-    <div style="margin-top:8px;">
+    <div style="margin-top:8px;display:flex;gap:16px;flex-wrap:wrap;">
       <label style="font-family:var(--mono);font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px;cursor:pointer;">
-        <input type="checkbox" id="seedance-fast" onchange="updateCost()"> USE FAST TIER (–$0.022/s cheaper)
+        <input type="radio" name="seedance-tier" id="seedance-standard" value="standard" checked onchange="updateCost()"> STANDARD ($0.112/s)
+      </label>
+      <label style="font-family:var(--mono);font-size:11px;color:var(--dim);display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="radio" name="seedance-tier" id="seedance-fast" value="fast" onchange="updateCost()"> FAST ($0.09/s)
+      </label>
+      <label style="font-family:var(--mono);font-size:11px;color:var(--gold);display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="radio" name="seedance-tier" id="seedance-mini" value="mini" onchange="updateCost()"> MINI ($0.056/s · 720p max)
       </label>
     </div>
   </div>
@@ -570,9 +576,8 @@
       <div class="field-group">
         <div class="field-label">RESOLUTION</div>
         <select id="grok-resolution" onchange="updateCost()">
-          <option value="720p">720p</option>
-          <option value="1080p">1080p</option>
           <option value="480p">480p</option>
+          <option value="720p">720p</option>
         </select>
       </div>
       <div class="field-group">
@@ -667,11 +672,23 @@
 const API_BASE = 'https://api.atlascloud.ai/api/v1';
 
 // Seedance model strings by mode + fast flag
-function getSeedanceModel(mode, fast) {
+function getSeedanceTier() {
+  const el = document.querySelector('input[name="seedance-tier"]:checked');
+  return el ? el.value : 'standard';
+}
+
+function getSeedanceModel(mode, tier) {
+  if (tier === 'mini') {
+    const base = 'bytedance/seedance-2.0-mini';
+    if (mode === 'text-to-video')      return `${base}/text-to-video`;
+    if (mode === 'image-to-video')     return `${base}/image-to-video`;
+    if (mode === 'reference-to-video') return `${base}/reference-to-video`;
+    return `${base}/image-to-video`;
+  }
   const base = 'bytedance/seedance-2.0';
-  const suffix = fast ? '-fast' : '';
-  if (mode === 'text-to-video')     return `${base}${suffix}/text-to-video`;
-  if (mode === 'image-to-video')    return `${base}${suffix}/image-to-video`;
+  const suffix = tier === 'fast' ? '-fast' : '';
+  if (mode === 'text-to-video')      return `${base}${suffix}/text-to-video`;
+  if (mode === 'image-to-video')     return `${base}${suffix}/image-to-video`;
   if (mode === 'reference-to-video') return `${base}${suffix}/reference-to-video`;
   return `${base}/image-to-video`;
 }
@@ -686,8 +703,9 @@ const MODELS = {
 const COSTS = {
   seedance_standard: { '720p': 0.112, '1080p': 0.112 },
   seedance_fast:     { '720p': 0.09,  '1080p': 0.09  },
+  seedance_mini:     { '480p': 0.056, '720p': 0.056  },
   kling:    { '720p': 0.071, '1080p': 0.095 },
-  grok:     { '480p': 0.04, '720p': 0.07, '1080p': 0.12 },
+  grok:     { '480p': 0.04, '720p': 0.07 },
   hailuo:   { '720p': 0.06, '1080p': 0.095 },
   avatar:   { default: 0.112 }
 };
@@ -745,8 +763,8 @@ function setSeedanceMode(btn, mode) {
 
 function updateModelTag() {
   if (currentMode !== 'seedance') return;
-  const fast = document.getElementById('seedance-fast').checked;
-  document.getElementById('model-tag').textContent = getSeedanceModel(seedanceMode, fast);
+  const tier = getSeedanceTier();
+  document.getElementById('model-tag').textContent = getSeedanceModel(seedanceMode, tier);
 }
 
 // ─── MODEL TAB ──────────────────────────────────────────────────
@@ -976,12 +994,15 @@ function updateCost() {
     return;
   }
   if (currentMode === 'seedance') {
-    const fast = document.getElementById('seedance-fast').checked;
-    const rate = fast ? 0.09 : 0.112;
+    const tier = getSeedanceTier();
+    const rateMap = { standard: 0.112, fast: 0.09, mini: 0.056 };
+    const rate = rateMap[tier] || 0.112;
     const dur = parseInt(document.getElementById('duration').value) || 5;
     const res = document.getElementById('resolution').value;
-    const tier = fast ? 'Fast' : 'Standard';
-    el.innerHTML = `Estimated cost: <span>~$${(dur * rate).toFixed(3)}</span> (${dur}s · ${res} · ${tier} · $${rate}/s)`;
+    const tierLabel = { standard: 'Standard', fast: 'Fast', mini: 'Mini' }[tier];
+    // Mini caps at 720p — warn if 1080p selected
+    const resLabel = (tier === 'mini' && res === '1080p') ? '720p (Mini max)' : res;
+    el.innerHTML = `Estimated cost: <span>~$${(dur * rate).toFixed(3)}</span> (${dur}s · ${resLabel} · ${tierLabel} · $${rate}/s)`;
     updateModelTag();
     return;
   }
@@ -1068,8 +1089,10 @@ async function runGeneration() {
     let body = {};
 
     if (currentMode === 'seedance') {
-      const fast = document.getElementById('seedance-fast').checked;
-      const model = getSeedanceModel(seedanceMode, fast);
+      const tier = getSeedanceTier();
+      const model = getSeedanceModel(seedanceMode, tier);
+      // Mini caps at 720p
+      const isMini = tier === 'mini';
       body.model = model;
 
       const aspect = document.getElementById('aspect').value;
@@ -1079,9 +1102,9 @@ async function runGeneration() {
       body.width    = w;
       body.height   = h;
       body.fps      = parseInt(document.getElementById('fps').value);
-      body.resolution = document.getElementById('resolution').value;
+      body.resolution = (isMini && document.getElementById('resolution').value === '1080p') ? '720p' : document.getElementById('resolution').value;
 
-      log(`Seedance 2.0 ${fast ? 'Fast' : 'Standard'} — ${seedanceMode} — ${body.duration}s ${aspect}`, 'info');
+      log(`Seedance 2.0 ${tier.charAt(0).toUpperCase()+tier.slice(1)} — ${seedanceMode} — ${body.duration}s ${aspect}`, 'info');
 
       if (seedanceMode === 'image-to-video') {
         body.image = await uploadFile(imageFileBlob, apiKey);
