@@ -298,12 +298,13 @@
   /* ── LOG ── */
   .log {
     font-family: var(--mono);
-    font-size: 18px;
-    line-height: 1.8;
+    font-size: 13px;
+    line-height: 1.7;
     padding: 14px 16px;
     background: #120E08;
     border: 1px solid var(--border);
-    max-height: 130px;
+    min-height: 120px;
+    max-height: 240px;
     overflow-y: auto;
   }
 
@@ -749,10 +750,16 @@ function setSeedanceMode(btn, mode) {
   document.getElementById('video-ref-section').style.display    = isRef ? '' : 'none';
   document.getElementById('audio-ref-section').style.display    = isRef ? '' : 'none';
 
-  // Initialize slots for reference mode
-  if (isRef && imageSlots.length === 0) addImageSlot();
-  if (isRef && videoSlots.length === 0) addVideoSlot();
-  if (isRef && audioRefSlots.length === 0) addAudioSlot();
+  // Initialize slots for reference mode — reset grids on each entry
+  if (isRef) {
+    // Clear grids and reset state so re-entering ref mode is clean
+    const imgGrid = document.getElementById('multi-image-grid');
+    const vidGrid = document.getElementById('video-ref-grid');
+    const audGrid = document.getElementById('audio-ref-grid');
+    if (imgGrid && imgGrid.children.length === 0) { imageSlots = []; addImageSlot(); }
+    if (vidGrid && vidGrid.children.length === 0) { videoSlots = []; addVideoSlot(); }
+    if (audGrid && audGrid.children.length === 0) { audioRefSlots = []; addAudioSlot(); }
+  }
 
   // Update prompt required indicator
   document.getElementById('prompt-req').style.display = 'inline';
@@ -937,7 +944,7 @@ function addAudioSlot() {
   wrap.style.cssText = 'border:1px solid var(--border);padding:8px;background:var(--surface2);position:relative;';
   wrap.innerHTML = `
     <div style="font-family:var(--mono);font-size:10px;color:var(--gold);margin-bottom:4px;">AUDIO ${idx + 1}</div>
-    <input type="file" id="aud-input-${idx}" accept="audio/*" style="display:none" onchange="handleAudioSlot(${idx}, this)">
+    <input type="file" id="aud-input-${idx}" accept="audio/mp3,audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/m4a,audio/aac,audio/ogg,audio/*" style="display:none" onchange="handleAudioSlot(${idx}, this)">
     <div id="aud-empty-${idx}" style="padding:10px;text-align:center;cursor:pointer;color:var(--dim);font-family:var(--mono);font-size:11px;" onclick="document.getElementById('aud-input-${idx}').click()">TAP TO SELECT AUDIO (max 15s)</div>
     <div id="aud-filled-${idx}" style="display:none;">
       <div id="aud-name-${idx}" style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px;"></div>
@@ -1041,9 +1048,10 @@ async function uploadFile(blob, apiKey) {
     body: fd
   });
   const data = await res.json();
-  if (!data?.data?.download_url) throw new Error('Upload failed: ' + JSON.stringify(data));
+  const fileUrl = data?.url || data?.data?.url || data?.data?.download_url;
+  if (!fileUrl) throw new Error('Upload failed: ' + JSON.stringify(data));
   log('Upload complete.', 'ok');
-  return data.data.download_url;
+  return fileUrl;
 }
 
 // ─── POLL ───────────────────────────────────────────────────────────
@@ -1107,9 +1115,9 @@ async function runGeneration() {
       log(`Seedance 2.0 ${tier.charAt(0).toUpperCase()+tier.slice(1)} — ${seedanceMode} — ${body.duration}s ${aspect}`, 'info');
 
       if (seedanceMode === 'image-to-video') {
-        body.image = await uploadFile(imageFileBlob, apiKey);
+        body.image_url = await uploadFile(imageFileBlob, apiKey);
         if (lastFrameBlob) {
-          body.image_tail = await uploadFile(lastFrameBlob, apiKey);
+          body.image_tail_url = await uploadFile(lastFrameBlob, apiKey);
           log('Last frame uploaded.', 'info');
         }
       } else if (seedanceMode === 'reference-to-video') {
@@ -1128,9 +1136,9 @@ async function runGeneration() {
         for (const slot of audioRefSlots) {
           if (slot.blob) audUrls.push(await uploadFile(slot.blob, apiKey));
         }
-        if (imgUrls.length > 0)  body.images = imgUrls;
-        if (vidUrls.length > 0)  body.videos = vidUrls;
-        if (audUrls.length > 0)  body.audios = audUrls;
+        if (imgUrls.length > 0)  body.image_urls = imgUrls;
+        if (vidUrls.length > 0)  body.video_urls = vidUrls;
+        if (audUrls.length > 0)  body.audio_urls = audUrls;
         log(`Reference upload complete — ${imgUrls.length} img, ${vidUrls.length} vid, ${audUrls.length} aud`, 'ok');
       }
       // text-to-video: just prompt + params, no uploads
@@ -1139,7 +1147,7 @@ async function runGeneration() {
       const imgUrl = await uploadFile(imageFileBlob, apiKey);
       body = {
         model: MODELS.kling,
-        image: imgUrl,
+        image_url: imgUrl,
         prompt: document.getElementById('kling-prompt').value.trim(),
         duration: parseInt(document.getElementById('kling-duration').value),
         resolution: document.getElementById('kling-resolution').value,
@@ -1154,14 +1162,14 @@ async function runGeneration() {
         resolution: document.getElementById('grok-resolution').value,
         aspect_ratio: document.getElementById('grok-aspect').value
       };
-      if (imageFileBlob) body.image = await uploadFile(imageFileBlob, apiKey);
+      if (imageFileBlob) body.image_url = await uploadFile(imageFileBlob, apiKey);
       log(`Grok Video v1.5 — ${body.resolution}`, 'info');
 
     } else if (currentMode === 'hailuo') {
       const imgUrl = await uploadFile(imageFileBlob, apiKey);
       body = {
         model: MODELS.hailuo,
-        image: imgUrl,
+        image_url: imgUrl,
         prompt: document.getElementById('hailuo-prompt').value.trim(),
         duration: parseInt(document.getElementById('hailuo-duration').value),
         resolution: document.getElementById('hailuo-resolution').value
@@ -1171,7 +1179,7 @@ async function runGeneration() {
     } else if (currentMode === 'avatar') {
       const imgUrl   = await uploadFile(imageFileBlob, apiKey);
       const audioUrl = await uploadFile(audioFileBlob, apiKey);
-      body = { model: MODELS.avatar, image: imgUrl, audio: audioUrl };
+      body = { model: MODELS.avatar, image_url: imgUrl, audio_url: audioUrl };
       const ap = document.getElementById('avatar-prompt').value.trim();
       if (ap) body.prompt = ap;
       log(`Kling Avatar — ${Math.max(audioDurationSec, 5)}s billed`, 'info');
